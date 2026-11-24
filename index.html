@@ -162,11 +162,12 @@ function money(v){
 const num = c => Number(String(c.gia).replace(/[^\d]/g, "")) || 0;
 
 function norm(s){ return (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").toLowerCase(); }
-
+const split = v => (v || "").split(/[;|]/).map(s => s.trim()).filter(Boolean);
+const has = (v, x) => split(v).includes(x);
 function filtered(){
   let list = state.cards.filter(c =>
-    (state.cat === "Tất cả" || c.danh_muc === state.cat) &&
-    (!state.sub || c.muc_nho === state.sub) &&
+(state.cat === "Tất cả" || has(c.danh_muc, state.cat)) &&
+(!state.sub || has(c.muc_nho, state.sub)) &&
     (!state.brand || c.hang === state.brand) &&
     (!state.q || norm([c.ten, c.hang, c.bo_suu_tap, c.mua_giai, c.so_the, c.do_hiem, c.muc_nho].join(" ")).includes(norm(state.q))));
   if (state.sort) list = [...list].sort((a, b) => state.sort === "asc" ? num(a) - num(b) : num(b) - num(a));
@@ -174,12 +175,12 @@ function filtered(){
 }
 
 function renderTabs(){
-  const extra = [...new Set(state.cards.map(c => c.danh_muc))].filter(x => x && !CONFIG.CATEGORIES.includes(x));
+ const extra = [...new Set(state.cards.flatMap(c => split(c.danh_muc)))].filter(x => !CONFIG.CATEGORIES.includes(x));
   const cats = ["Tất cả", ...CONFIG.CATEGORIES, ...extra];
   $("#tabs").innerHTML = cats.map(c => `<button class="tab" role="tab" aria-selected="${c === state.cat}" data-c="${esc(c)}">${esc(c)}</button>`).join("");
 }
 function renderFilters(){
-  const subs = [...new Set(state.cards.filter(c => state.cat === "Tất cả" || c.danh_muc === state.cat).map(c => c.muc_nho).filter(Boolean))];
+const subs = [...new Set(state.cards.filter(c => state.cat === "Tất cả" || has(c.danh_muc, state.cat)).flatMap(c => split(c.muc_nho)))];
   $("#chips").innerHTML = subs.length ? [`<button class="chip" aria-pressed="${!state.sub}" data-s="">Tất cả</button>`, ...subs.map(s => `<button class="chip" aria-pressed="${state.sub === s}" data-s="${esc(s)}">${esc(s)}</button>`)].join("") : "";
   const brands = [...new Set(state.cards.map(c => c.hang).filter(h => h && h !== "-"))];
   $("#brand").innerHTML = `<option value="">Tất cả hãng</option>` + brands.map(b => `<option ${b === state.brand ? "selected" : ""}>${esc(b)}</option>`).join("");
