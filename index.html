@@ -201,7 +201,7 @@ function render(){ renderTabs(); renderFilters(); renderGrid(); }
 
 function openCard(i){
   const c = state.cards[i], front = imgUrl(c.anh) || placeholder(c.ten), back = imgUrl(c.anh_sau);
-  const rows = [["Hãng", c.hang], ["Bộ sưu tập", c.bo_suu_tap], ["Mùa giải", c.mua_giai], ["Số thẻ", c.so_the], ["Độ hiếm", c.do_hiem], ["Tình trạng", c.tinh_trang]].filter(r => r[1] && r[1] !== "-");
+  const rows = [["Hãng", c.hang], ["Bộ sưu tập", c.bo_suu_tap], ["Mùa giải", c.mua_giai], ["Mã thẻ", c.so_the], ["Độ hiếm", c.do_hiem], ["Tình trạng", c.tinh_trang]].filter(r => r[1] && r[1] !== "-");
   $("#lb").innerHTML = `<div class="pic"><img id="lbImg" alt="${esc(c.ten)}" src="${esc(front)}"></div>
     <div class="side"><h2>${esc(c.ten)}</h2>
     <dl>${rows.map(r => `<dt>${r[0]}</dt><dd>${esc(r[1])}</dd>`).join("")}</dl>
