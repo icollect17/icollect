@@ -86,7 +86,7 @@ footer{background:var(--navy);color:#C9DBEE;padding:28px 0;font-size:14px}
     <input id="q" type="search" placeholder="Tìm cầu thủ, bộ sưu tập, số thẻ…" aria-label="Tìm kiếm">
     <select id="brand" aria-label="Hãng"></select>
     <select id="sort" aria-label="Sắp xếp">
-      <option value="">Mặc định</option>
+      <option value="">Mới nhất</option>
       <option value="asc">Giá thấp đến cao</option>
       <option value="desc">Giá cao đến thấp</option>
     </select>
@@ -228,7 +228,7 @@ $("#fbTop").href = CONFIG.FACEBOOK_URL;
     try { const r = await fetch(CONFIG.SHEET_CSV_URL); if (!r.ok) throw 0; csv = await r.text(); }
     catch { $("#notice").innerHTML = `<div class="notice">Không tải được Google Sheets, đang hiển thị dữ liệu mẫu. Kiểm tra lại link CSV trong phần cấu hình.</div>`; }
   } else $("#notice").innerHTML = `<div class="notice">Đang hiển thị dữ liệu mẫu. Dán link Google Sheets vào <b>SHEET_CSV_URL</b> để dùng dữ liệu thật.</div>`;
-  state.cards = parseCSV(csv);
+state.cards = parseCSV(csv).reverse();
   render();
 })();
 </script>
