@@ -169,7 +169,7 @@ function filtered(){
   let list = state.cards.filter(c =>
 (state.cat === "Tất cả" || has(c.danh_muc, state.cat)) &&
 (!state.sub || has(c.muc_nho, state.sub)) &&
-    (!state.brand || c.hang === state.brand) &&
+    (!state.brand || has(c.hang, state.brand)) &&
     (!state.q || norm([c.ten, c.hang, c.bo_suu_tap, c.mua_giai, c.so_the, c.do_hiem, c.muc_nho].join(" ")).includes(norm(state.q))));
   if (state.sort) list = [...list].sort((a, b) => state.sort === "asc" ? num(a) - num(b) : num(b) - num(a));
   return list;
@@ -183,7 +183,7 @@ function renderTabs(){
 function renderFilters(){
 const subs = [...new Set(state.cards.filter(c => state.cat === "Tất cả" || has(c.danh_muc, state.cat)).flatMap(c => split(c.muc_nho)))];
   $("#chips").innerHTML = subs.length ? [`<button class="chip" aria-pressed="${!state.sub}" data-s="">Tất cả</button>`, ...subs.map(s => `<button class="chip" aria-pressed="${state.sub === s}" data-s="${esc(s)}">${esc(s)}</button>`)].join("") : "";
-  const brands = [...new Set(state.cards.map(c => c.hang).filter(h => h && h !== "-"))];
+  const brands = [...new Set(state.cards.flatMap(c => split(c.hang)))].filter(h => h !== "-");
   $("#brand").innerHTML = `<option value="">Tất cả hãng</option>` + brands.map(b => `<option ${b === state.brand ? "selected" : ""}>${esc(b)}</option>`).join("");
 }
 function renderGrid(){
@@ -193,7 +193,7 @@ function renderGrid(){
     const sold = isSold(c);
     return `<button class="card ${sold ? "sold" : ""}" data-i="${state.cards.indexOf(c)}">
       <div class="pic"><img loading="lazy" alt="${esc(c.ten)}" src="${esc(imgUrl(c.anh) || placeholder(c.ten))}" onerror="this.onerror=null;this.src='${placeholder(c.ten)}'">
-      ${c.hang && c.hang !== "-" ? `<span class="tag">${esc(c.hang)}</span>` : ""}${c.do_hiem ? `<span class="rar">${esc(c.do_hiem)}</span>` : ""}${sold ? `<div class="sold-badge">ĐÃ BÁN</div>` : ""}</div>
+      ${c.hang && c.hang !== "-" ? `<span class="tag">${esc(split(c.hang).join(" / "))}</span>` : ""}${c.do_hiem ? `<span class="rar">${esc(c.do_hiem)}</span>` : ""}${sold ? `<div class="sold-badge">ĐÃ BÁN</div>` : ""}</div>
       <div class="info"><h3>${esc(c.ten)}</h3><small>${esc([c.bo_suu_tap, c.mua_giai].filter(Boolean).join(", "))}</small><div class="price">${money(c.gia)}</div></div></button>`;
   }).join("") : `<div class="empty">Không tìm thấy sản phẩm phù hợp. Thử bỏ bớt bộ lọc.</div>`;
 }
@@ -201,7 +201,7 @@ function render(){ renderTabs(); renderFilters(); renderGrid(); }
 
 function openCard(i){
   const c = state.cards[i], front = imgUrl(c.anh) || placeholder(c.ten), back = imgUrl(c.anh_sau);
-  const rows = [["Hãng", c.hang], ["Bộ sưu tập", c.bo_suu_tap], ["Mùa giải", c.mua_giai], ["Mã thẻ", c.so_the], ["Độ hiếm", c.do_hiem], ["Tình trạng", c.tinh_trang]].filter(r => r[1] && r[1] !== "-");
+  const rows = [["Hãng", split(c.hang).join(", ")], ["Bộ sưu tập", c.bo_suu_tap], ["Mùa giải", c.mua_giai], ["Mã thẻ", c.so_the], ["Độ hiếm", c.do_hiem], ["Tình trạng", c.tinh_trang]].filter(r => r[1] && r[1] !== "-");
   $("#lb").innerHTML = `<div class="pic"><img id="lbImg" alt="${esc(c.ten)}" src="${esc(front)}"></div>
     <div class="side"><h2>${esc(c.ten)}</h2>
     <dl>${rows.map(r => `<dt>${r[0]}</dt><dd>${esc(r[1])}</dd>`).join("")}</dl>
