@@ -193,7 +193,7 @@ function renderGrid(){
     const sold = isSold(c);
     return `<button class="card ${sold ? "sold" : ""}" data-i="${state.cards.indexOf(c)}">
       <div class="pic"><img loading="lazy" alt="${esc(c.ten)}" src="${esc(imgUrl(c.anh) || placeholder(c.ten))}" onerror="this.onerror=null;this.src='${placeholder(c.ten)}'">
-      ${c.hang && c.hang !== "-" ? `<span class="tag">${esc(split(c.hang).join(" / "))}</span>` : ""}${c.do_hiem ? `<span class="rar">${esc(c.do_hiem)}</span>` : ""}${sold ? `<div class="sold-badge">ĐÃ BÁN</div>` : ""}</div>
+      ${c.hang && c.hang !== "-" ? `<span class="tag">${esc(split(c.hang).join(" x "))}</span>` : ""}${c.do_hiem ? `<span class="rar">${esc(c.do_hiem)}</span>` : ""}${sold ? `<div class="sold-badge">ĐÃ BÁN</div>` : ""}</div>
       <div class="info"><h3>${esc(c.ten)}</h3><small>${esc([c.bo_suu_tap, c.mua_giai].filter(Boolean).join(", "))}</small><div class="price">${money(c.gia)}</div></div></button>`;
   }).join("") : `<div class="empty">Không tìm thấy sản phẩm phù hợp. Thử bỏ bớt bộ lọc.</div>`;
 }
